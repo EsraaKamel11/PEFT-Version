@@ -1,23 +1,33 @@
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from pathlib import Path
 import yaml
 import os
 import logging
 from dotenv import load_dotenv
+from typing import Dict, Any, List
 load_dotenv()
 
 class Settings(BaseSettings):
-    # Example config fields
-    model_name: str = "gpt-3"
-    train_batch_size: int = 8
-    eval_batch_size: int = 8
+    # Core config fields
+    domain: str = "electric vehicle charging stations"
+    model_name: str = "meta-llama/Llama-2-7b-hf"
+    train_batch_size: int = 4
+    eval_batch_size: int = 4
     learning_rate: float = 3e-5
     use_gpu: bool = True
     log_level: str = "INFO"
+    
+    # Additional fields from config.yaml
+    data_sources: Dict[str, Any] = {}
+    training: Dict[str, Any] = {}
+    evaluation: Dict[str, Any] = {}
+    deployment: Dict[str, Any] = {}
+    prompts: Dict[str, Any] = {}
 
     class Config:
         env_file = ".env"
         env_file_encoding = "utf-8"
+        extra = "allow"  # Allow extra fields
 
 # Load YAML config and override defaults
 config_path = Path(__file__).parent / "config.yaml"
@@ -32,6 +42,6 @@ settings = Settings(**yaml_config)
 # Logging configuration
 logging.basicConfig(
     level=getattr(logging, settings.log_level.upper(), logging.INFO),
-    format="%(asctime)s - %(levelname)s - %(name)s - `%(message)s"
+    format="%(asctime)s - %(levelname)s - %(name)s - %(message)s"
 )
 logger = logging.getLogger("ml_pipeline") 

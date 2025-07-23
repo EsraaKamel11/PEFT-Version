@@ -16,6 +16,7 @@ playwright
 robotexclusionrulesparser
 pymupdf
 unstructured
+pi_heif
 trafilatura
 nltk
 
@@ -33,6 +34,7 @@ evaluate
 fastapi
 uvicorn
 pydantic
+pydantic-settings
 prometheus-fastapi-instrumentator==7.1.0
 slowapi
 onnxruntime

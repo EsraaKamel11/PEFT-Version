@@ -3,7 +3,12 @@ from sentence_transformers import SentenceTransformer, util
 import logging
 import trafilatura
 import nltk
-nltk.download('punkt', quiet=True)
+
+# Download required NLTK data
+try:
+    nltk.data.find('tokenizers/punkt')
+except LookupError:
+    nltk.download('punkt', quiet=True)
 
 class DataCleaner:
     def __init__(self, model_name: str = 'all-MiniLM-L6-v2', similarity_threshold: float = 0.95):
@@ -19,9 +24,16 @@ class DataCleaner:
         return ' '.join(text.strip().lower().split())
 
     def filter_sentences(self, text: str, min_length: int = 20) -> str:
-        sentences = nltk.sent_tokenize(text)
-        filtered = [s for s in sentences if len(s) >= min_length]
-        return ' '.join(filtered)
+        try:
+            sentences = nltk.sent_tokenize(text)
+            filtered = [s for s in sentences if len(s) >= min_length]
+            return ' '.join(filtered)
+        except Exception as e:
+            self.logger.warning(f"Error in sentence tokenization: {e}")
+            # Fallback: simple sentence splitting
+            sentences = text.split('. ')
+            filtered = [s for s in sentences if len(s) >= min_length]
+            return '. '.join(filtered)
 
     def remove_duplicates(self, df: pd.DataFrame, text_column: str = 'text') -> pd.DataFrame:
         self.logger.info('Removing duplicates using semantic similarity...')

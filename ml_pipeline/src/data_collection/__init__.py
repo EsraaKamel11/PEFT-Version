@@ -4,4 +4,4 @@ from .pdf_extractor import PDFExtractor
 from .metadata_handler import MetadataHandler
 from .playwright_scraper import PlaywrightScraper
 from .pymupdf_extractor import PyMuPDFExtractor
-from .unstructured_extractor import UnstructuredExtractor 
+# from .unstructured_extractor import UnstructuredExtractor  # Temporarily disabled due to dependency issues 
