@@ -1,0 +1,6 @@
+model_name: "gpt-3"
+train_batch_size: 8
+eval_batch_size: 8
+learning_rate: 3e-5
+use_gpu: true
+log_level: "INFO" 
