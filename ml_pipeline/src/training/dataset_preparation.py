@@ -70,15 +70,22 @@ class QADatasetPreparer:
         val_dataset = Dataset.from_pandas(val_df.reset_index(drop=True))
         return DatasetDict({"train": train_dataset, "validation": val_dataset})
 
-    def save_jsonl(self, dataset: Dataset, filename: str) -> None:
+    def format_alpaca(self, qa: dict) -> str:
+        return f"### Instruction: {qa['question']}\n### Response: {qa['answer']}"
+
+    def save_jsonl(self, dataset: Dataset, filename: str, alpaca_format: bool = False) -> None:
         path = os.path.join(self.output_dir, filename)
         with open(path, "w", encoding="utf-8") as f:
             for item in dataset:
-                f.write(json.dumps(item, ensure_ascii=False) + "\n")
+                if alpaca_format:
+                    formatted = self.format_alpaca(item)
+                    f.write(json.dumps({"text": formatted, "context": item.get("context", "")}, ensure_ascii=False) + "\n")
+                else:
+                    f.write(json.dumps(item, ensure_ascii=False) + "\n")
         self.logger.info(f"Saved dataset to {path}")
 
-    def prepare(self, texts: List[str], n_questions: int = 5) -> None:
+    def prepare(self, texts: List[str], n_questions: int = 5, alpaca_format: bool = False) -> None:
         qa_pairs = self.generate_qa_pairs(texts, n_questions)
         datasets = self.format_for_hf(qa_pairs)
-        self.save_jsonl(datasets["train"], "train.jsonl")
-        self.save_jsonl(datasets["validation"], "validation.jsonl") 
+        self.save_jsonl(datasets["train"], "train.jsonl", alpaca_format=alpaca_format)
+        self.save_jsonl(datasets["validation"], "validation.jsonl", alpaca_format=alpaca_format) 

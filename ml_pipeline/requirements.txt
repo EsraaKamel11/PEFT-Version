@@ -1,7 +1,58 @@
-pydantic>=1.10
-pyyaml
+# Core ML and NLP
+transformers>=4.30
+peft
+bitsandbytes
+accelerate
 torch
-transformers
-tqdm
+sentence-transformers
 scikit-learn
-numpy 
+
+# Data Collection
+requests
+beautifulsoup4
+pypdf2
+pdfplumber
+playwright
+robotexclusionrulesparser
+pymupdf
+unstructured
+trafilatura
+nltk
+
+# Data Processing
+pandas
+numpy
+textacy==0.13.0
+python-Levenshtein==0.25.0
+chromadb
+
+# Evaluation
+evaluate
+
+# Deployment
+fastapi
+uvicorn
+pydantic
+prometheus-fastapi-instrumentator==7.1.0
+slowapi
+onnxruntime
+
+# Monitoring & Experiment Tracking
+wandb
+
+# Orchestration
+prefect
+slack_sdk
+
+# Utilities
+pyyaml
+python-dotenv
+
+# Testing & Linting
+pytest
+flake8
+
+# Optional: For Parquet/SQL support
+#pyarrow
+#sqlite3 # (builtin with Python, but listed for clarity)
+#simhash-py # (removed for Windows compatibility) 

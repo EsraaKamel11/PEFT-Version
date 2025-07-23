@@ -9,12 +9,20 @@ from .model_registry import ModelRegistry
 from .auth_handler import APIKeyAuth
 from .monitoring import Monitoring
 import asyncio
+from slowapi import Limiter, _rate_limit_exceeded_handler
+from slowapi.util import get_remote_address
+from slowapi.errors import RateLimitExceeded
 
 app = FastAPI()
 logger = logging.getLogger("inference_server")
 registry = ModelRegistry()
 auth = APIKeyAuth()
 monitor = Monitoring()
+
+# Add rate limiter
+limiter = Limiter(key_func=get_remote_address)
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 class InferenceRequest(BaseModel):
     prompt: str
@@ -51,6 +59,7 @@ async def startup_event():
     logger.info("Inference server started.")
 
 @app.post("/infer")
+@limiter.limit("5/minute")
 async def infer(request: Request, payload: InferenceRequest, api_key: str = Depends(auth.verify_key)):
     monitor.log_request(request)
     model, tokenizer = await model_cache.get_model(payload.base_model, payload.adapter_version)
