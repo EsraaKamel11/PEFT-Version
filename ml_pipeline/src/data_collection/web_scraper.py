@@ -39,6 +39,7 @@ class WebScraper(BaseCollector):
                 text = soup.get_text(separator='\n', strip=True)
                 metadata = {
                     'source': url,
+                    'type': 'web',
                     'status_code': response.status_code,
                     'timestamp': time.time()
                 }

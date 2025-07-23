@@ -24,7 +24,7 @@ class PDFExtractor(BaseCollector):
                 self.logger.error(f"Error extracting {pdf_path}: {e}")
 
     def _extract_metadata(self, pdf_path: str) -> Dict[str, Any]:
-        meta = {'source': pdf_path}
+        meta = {'source': pdf_path, 'type': 'pdf'}
         try:
             with open(pdf_path, 'rb') as f:
                 reader = PyPDF2.PdfReader(f)

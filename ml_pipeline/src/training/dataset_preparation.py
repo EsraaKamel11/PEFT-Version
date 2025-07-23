@@ -99,6 +99,46 @@ class QADatasetPreparer:
 
     def prepare(self, texts: List[str], n_questions: int = 5, alpaca_format: bool = False) -> None:
         qa_pairs = self.generate_qa_pairs(texts, n_questions)
+        
+        # Store QA pairs for metadata processing
+        self.qa_pairs = qa_pairs
+        
         datasets = self.format_for_hf(qa_pairs)
         self.save_jsonl(datasets["train"], "train.jsonl", alpaca_format=alpaca_format)
-        self.save_jsonl(datasets["validation"], "validation.jsonl", alpaca_format=alpaca_format) 
+        self.save_jsonl(datasets["validation"], "validation.jsonl", alpaca_format=alpaca_format)
+
+    def load_qa_pairs(self) -> List[Dict[str, Any]]:
+        """Load the generated QA pairs"""
+        return getattr(self, 'qa_pairs', [])
+
+    def save_qa_pairs_with_metadata(self, qa_pairs: List[Dict[str, Any]]) -> None:
+        """Save QA pairs with metadata and attribution"""
+        import json
+        
+        # Save detailed QA pairs with metadata
+        metadata_file = os.path.join(self.output_dir, "qa_pairs_with_metadata.jsonl")
+        with open(metadata_file, 'w', encoding='utf-8') as f:
+            for qa in qa_pairs:
+                f.write(json.dumps(qa, ensure_ascii=False) + '\n')
+        
+        # Save metadata summary
+        summary_file = os.path.join(self.output_dir, "metadata_summary.json")
+        summary = {
+            "total_qa_pairs": len(qa_pairs),
+            "with_source": sum(1 for qa in qa_pairs if qa.get("source_metadata", {}).get("source_type") != "unknown"),
+            "source_types": {},
+            "attribution_stats": {}
+        }
+        
+        for qa in qa_pairs:
+            source_type = qa.get("source_metadata", {}).get("source_type", "unknown")
+            summary["source_types"][source_type] = summary["source_types"].get(source_type, 0) + 1
+            
+            attribution = qa.get("attribution", "Unknown")
+            summary["attribution_stats"][attribution] = summary["attribution_stats"].get(attribution, 0) + 1
+        
+        with open(summary_file, 'w', encoding='utf-8') as f:
+            json.dump(summary, f, ensure_ascii=False, indent=2)
+        
+        self.logger.info(f"Saved QA pairs with metadata to {metadata_file}")
+        self.logger.info(f"Saved metadata summary to {summary_file}") 

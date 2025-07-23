@@ -1,0 +1,44 @@
+# Streamlit UI Requirements
+streamlit>=1.28.0
+plotly>=5.17.0
+pandas>=2.0.0
+numpy>=1.24.0
+requests>=2.31.0
+
+# Visualization
+altair>=5.0.0
+vega-lite>=5.0.0
+
+# Data processing
+openpyxl>=3.1.0
+xlrd>=2.0.0
+
+# Interactive components
+streamlit-ace>=0.1.1
+streamlit-option-menu>=0.3.0
+streamlit-autorefresh>=0.3.0
+
+# Charts and graphs
+bokeh>=3.0.0
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Real-time updates
+websocket-client>=1.6.0
+
+# File handling
+python-multipart>=0.0.6
+
+# Date and time
+python-dateutil>=2.8.0
+
+# JSON handling
+jsonschema>=4.19.0
+
+# Configuration
+pyyaml>=6.0.0
+toml>=0.10.0
+
+# Utilities
+tqdm>=4.65.0
+rich>=13.0.0 
